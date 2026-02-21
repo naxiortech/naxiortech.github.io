@@ -1,1337 +1,524 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Naxior Tech — Tecnologia que Funciona</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg:       #080808;
-      --surface:  #101010;
-      --surface2: #161616;
-      --border:   #1f1f1f;
-      --accent:   #00D4FF;
-      --accent2:  #0099CC;
-      --white:    #F5F5F0;
-      --muted:    #6b6b6b;
-      --muted2:   #3a3a3a;
-    }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--bg);
-      color: var(--white);
-      overflow-x: hidden;
-    }
-
-    /* ─── NOISE OVERLAY ─── */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
-      opacity: 0.025;
-      pointer-events: none;
-      z-index: 9999;
-    }
-
-    /* ─── TYPOGRAPHY ─── */
-    h1, h2, h3, h4, nav, .plan-name, .stat-num { font-family: 'Syne', sans-serif; }
-
-    /* ─── NAV ─── */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      padding: 20px 60px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: rgba(8,8,8,0.85);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border);
-      transition: padding 0.3s;
-    }
-
-    .nav-logo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      text-decoration: none;
-    }
-
-    .logo-icon {
-      width: 32px; height: 32px;
-      position: relative;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .logo-icon::before, .logo-icon::after {
-      content: '';
-      position: absolute;
-      width: 3px; height: 100%;
-      border-radius: 2px;
-    }
-    .logo-icon::before {
-      background: var(--white);
-      transform: rotate(45deg);
-    }
-    .logo-icon::after {
-      background: linear-gradient(180deg, var(--white) 40%, var(--accent) 100%);
-      box-shadow: 0 0 8px var(--accent);
-      transform: rotate(-45deg);
-    }
-
-    .logo-text { display: flex; flex-direction: column; line-height: 1; }
-    .logo-name { font-size: 18px; font-weight: 700; letter-spacing: 2px; color: var(--white); }
-    .logo-sub  { font-size: 8px; letter-spacing: 5px; color: var(--accent); margin-top: 2px; }
-
-    .nav-links {
-      display: flex; gap: 36px; list-style: none;
-    }
-    .nav-links a {
-      color: var(--muted);
-      text-decoration: none;
-      font-size: 13px;
-      letter-spacing: 0.5px;
-      transition: color 0.2s;
-      font-family: 'DM Sans', sans-serif;
-    }
-    .nav-links a:hover { color: var(--white); }
-
-    .nav-cta {
-      background: var(--accent);
-      color: #000;
-      font-weight: 600;
-      font-size: 13px;
-      padding: 10px 22px;
-      border-radius: 4px;
-      text-decoration: none;
-      letter-spacing: 0.5px;
-      transition: opacity 0.2s, transform 0.2s;
-    }
-    .nav-cta:hover { opacity: 0.85; transform: translateY(-1px); }
-
-    /* ─── HERO ─── */
-    #hero {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      padding: 120px 60px 80px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    /* Grid background */
-    #hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px);
-      background-size: 60px 60px;
-      mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 40%, transparent 100%);
-    }
-
-    /* Glow orb */
-    #hero::after {
-      content: '';
-      position: absolute;
-      width: 600px; height: 600px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(0,212,255,0.08) 0%, transparent 70%);
-      top: 50%; left: 55%;
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-    }
-
-    .hero-content {
-      max-width: 760px;
-      position: relative;
-      z-index: 1;
-      animation: fadeUp 0.9s ease both;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(0,212,255,0.06);
-      border: 1px solid rgba(0,212,255,0.2);
-      padding: 6px 16px;
-      border-radius: 100px;
-      font-size: 11px;
-      letter-spacing: 2px;
-      color: var(--accent);
-      text-transform: uppercase;
-      margin-bottom: 32px;
-    }
-    .hero-badge span { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
-
-    h1 {
-      font-size: clamp(42px, 6vw, 80px);
-      font-weight: 800;
-      line-height: 1.05;
-      letter-spacing: -1px;
-      margin-bottom: 28px;
-    }
-
-    h1 em {
-      font-style: normal;
-      color: transparent;
-      -webkit-text-stroke: 1px rgba(255,255,255,0.25);
-    }
-
-    .hero-sub {
-      font-size: 18px;
-      color: var(--muted);
-      line-height: 1.7;
-      max-width: 520px;
-      margin-bottom: 48px;
-      font-weight: 300;
-    }
-
-    .hero-actions {
-      display: flex;
-      gap: 16px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      background: var(--accent);
-      color: #000;
-      font-weight: 600;
-      font-size: 14px;
-      padding: 16px 32px;
-      border-radius: 4px;
-      text-decoration: none;
-      transition: all 0.2s;
-      letter-spacing: 0.3px;
-    }
-    .btn-primary:hover { opacity: 0.85; transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,212,255,0.2); }
-
-    .btn-secondary {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--muted);
-      font-size: 14px;
-      text-decoration: none;
-      transition: color 0.2s;
-      font-weight: 400;
-    }
-    .btn-secondary:hover { color: var(--white); }
-    .btn-secondary::after { content: '→'; transition: transform 0.2s; }
-    .btn-secondary:hover::after { transform: translateX(4px); }
-
-    /* Stats bar */
-    .hero-stats {
-      position: absolute;
-      bottom: 60px; left: 60px; right: 60px;
-      display: flex;
-      gap: 0;
-      border-top: 1px solid var(--border);
-      padding-top: 40px;
-      z-index: 1;
-      animation: fadeUp 0.9s 0.3s ease both;
-    }
-
-    .stat {
-      flex: 1;
-      padding-right: 40px;
-      border-right: 1px solid var(--border);
-      margin-right: 40px;
-    }
-    .stat:last-child { border-right: none; margin-right: 0; padding-right: 0; }
-
-    .stat-num {
-      font-size: 36px;
-      font-weight: 800;
-      color: var(--white);
-      letter-spacing: -1px;
-      line-height: 1;
-      margin-bottom: 6px;
-    }
-    .stat-num span { color: var(--accent); }
-    .stat-label { font-size: 12px; color: var(--muted); letter-spacing: 0.5px; }
-
-    /* ─── SECTION BASE ─── */
-    section { padding: 100px 60px; }
-
-    .section-label {
-      font-size: 11px;
-      letter-spacing: 3px;
-      color: var(--accent);
-      text-transform: uppercase;
-      margin-bottom: 16px;
-      font-family: 'Syne', sans-serif;
-    }
-
-    h2 {
-      font-size: clamp(30px, 4vw, 48px);
-      font-weight: 700;
-      line-height: 1.1;
-      letter-spacing: -0.5px;
-      margin-bottom: 16px;
-    }
-
-    .section-sub {
-      font-size: 16px;
-      color: var(--muted);
-      line-height: 1.7;
-      max-width: 520px;
-      font-weight: 300;
-    }
-
-    /* ─── PROBLEMS ─── */
-    #problems { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-
-    .problems-header { margin-bottom: 60px; }
-
-    .problems-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 2px;
-    }
-
-    .problem-card {
-      background: var(--bg);
-      padding: 48px 40px;
-      position: relative;
-      overflow: hidden;
-      transition: background 0.3s;
-    }
-    .problem-card:hover { background: var(--surface2); }
-
-    .problem-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0;
-      width: 2px; height: 0;
-      background: var(--accent);
-      transition: height 0.4s ease;
-    }
-    .problem-card:hover::before { height: 100%; }
-
-    .problem-num {
-      font-family: 'Syne', sans-serif;
-      font-size: 11px;
-      letter-spacing: 2px;
-      color: var(--muted2);
-      margin-bottom: 24px;
-    }
-
-    .problem-icon {
-      width: 40px; height: 40px;
-      margin-bottom: 20px;
-      color: var(--muted);
-    }
-
-    .problem-card h3 {
-      font-size: 20px;
-      font-weight: 700;
-      margin-bottom: 12px;
-      line-height: 1.2;
-    }
-
-    .problem-card p {
-      font-size: 14px;
-      color: var(--muted);
-      line-height: 1.7;
-      font-weight: 300;
-    }
-
-    /* ─── SERVICES ─── */
-    #services { background: var(--bg); }
-
-    .services-layout {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 80px;
-      align-items: start;
-      margin-top: 60px;
-    }
-
-    .services-list { display: flex; flex-direction: column; gap: 2px; }
-
-    .service-item {
-      border: 1px solid var(--border);
-      padding: 32px 36px;
-      cursor: pointer;
-      transition: all 0.3s;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .service-item::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(0,212,255,0.04), transparent);
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-    .service-item:hover { border-color: rgba(0,212,255,0.3); }
-    .service-item:hover::after { opacity: 1; }
-    .service-item.active { border-color: var(--accent); background: rgba(0,212,255,0.04); }
-    .service-item.active::after { opacity: 1; }
-
-    .service-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 0;
-    }
-
-    .service-title {
-      font-family: 'Syne', sans-serif;
-      font-size: 16px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .service-tag {
-      font-size: 10px;
-      letter-spacing: 1.5px;
-      color: var(--accent);
-      background: rgba(0,212,255,0.08);
-      padding: 3px 10px;
-      border-radius: 2px;
-    }
-
-    .service-arrow {
-      color: var(--muted2);
-      transition: all 0.3s;
-      font-size: 18px;
-    }
-    .service-item.active .service-arrow,
-    .service-item:hover .service-arrow { color: var(--accent); transform: rotate(90deg); }
-
-    .service-body {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.4s ease, margin-top 0.3s;
-    }
-    .service-item.active .service-body { max-height: 200px; margin-top: 20px; }
-
-    .service-body p { font-size: 14px; color: var(--muted); line-height: 1.8; font-weight: 300; }
-
-    .service-body ul {
-      list-style: none;
-      margin-top: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .service-body ul li {
-      font-size: 13px;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .service-body ul li::before { content: '—'; color: var(--accent); font-size: 10px; }
-
-    /* Right panel */
-    .services-visual {
-      position: sticky;
-      top: 120px;
-    }
-
-    .visual-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 48px;
-      min-height: 400px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .visual-card::before {
-      content: '';
-      position: absolute;
-      bottom: -60px; right: -60px;
-      width: 200px; height: 200px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(0,212,255,0.06), transparent 70%);
-    }
-
-    .visual-num {
-      font-family: 'Syne', sans-serif;
-      font-size: 80px;
-      font-weight: 800;
-      color: var(--border);
-      line-height: 1;
-      position: absolute;
-      top: 32px; right: 40px;
-    }
-
-    .visual-content h3 {
-      font-size: 28px;
-      font-weight: 700;
-      margin-bottom: 16px;
-      line-height: 1.2;
-    }
-
-    .visual-content p {
-      font-size: 15px;
-      color: var(--muted);
-      line-height: 1.8;
-      font-weight: 300;
-    }
-
-    .visual-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 32px;
-    }
-
-    .tag {
-      font-size: 11px;
-      letter-spacing: 1px;
-      color: var(--muted);
-      border: 1px solid var(--border);
-      padding: 6px 14px;
-      border-radius: 2px;
-    }
-
-    /* ─── HOW IT WORKS ─── */
-    #how {
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .how-header { margin-bottom: 80px; }
-
-    .steps {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0;
-      position: relative;
-    }
-
-    .steps::before {
-      content: '';
-      position: absolute;
-      top: 28px; left: calc(16.66% + 20px);
-      width: calc(66.66% - 40px);
-      height: 1px;
-      background: linear-gradient(90deg, var(--accent), transparent 50%, var(--accent));
-      opacity: 0.3;
-    }
-
-    .step {
-      padding: 0 40px 0 0;
-      position: relative;
-    }
-    .step:last-child { padding-right: 0; }
-
-    .step-dot {
-      width: 56px; height: 56px;
-      border: 1px solid var(--border);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Syne', sans-serif;
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 32px;
-      background: var(--bg);
-      position: relative;
-      z-index: 1;
-      transition: all 0.3s;
-    }
-
-    .step:hover .step-dot {
-      border-color: var(--accent);
-      color: var(--accent);
-      box-shadow: 0 0 20px rgba(0,212,255,0.15);
-    }
-
-    .step h3 {
-      font-size: 20px;
-      font-weight: 700;
-      margin-bottom: 12px;
-      line-height: 1.2;
-    }
-
-    .step p {
-      font-size: 14px;
-      color: var(--muted);
-      line-height: 1.8;
-      font-weight: 300;
-    }
-
-    .step-note {
-      display: inline-block;
-      margin-top: 16px;
-      font-size: 11px;
-      letter-spacing: 1px;
-      color: var(--accent);
-      background: rgba(0,212,255,0.06);
-      padding: 4px 12px;
-      border-radius: 2px;
-    }
-
-    /* ─── PLANS ─── */
-    #plans { background: var(--bg); }
-
-    .plans-header { margin-bottom: 60px; }
-
-    .plans-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 2px;
-    }
-
-    .plan {
-      background: var(--surface);
-      padding: 48px 40px;
-      position: relative;
-      transition: transform 0.3s;
-      border: 1px solid transparent;
-    }
-
-    .plan:hover { transform: translateY(-4px); }
-
-    .plan.featured {
-      background: var(--surface2);
-      border-color: rgba(0,212,255,0.25);
-    }
-
-    .plan-badge {
-      position: absolute;
-      top: -12px; left: 40px;
-      background: var(--accent);
-      color: #000;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      padding: 4px 14px;
-      border-radius: 2px;
-      text-transform: uppercase;
-    }
-
-    .plan-name {
-      font-size: 13px;
-      letter-spacing: 3px;
-      color: var(--muted);
-      text-transform: uppercase;
-      margin-bottom: 24px;
-    }
-
-    .plan-price {
-      margin-bottom: 8px;
-      display: flex;
-      align-items: baseline;
-      gap: 4px;
-    }
-
-    .price-from { font-size: 12px; color: var(--muted); margin-right: 4px; }
-
-    .price-num {
-      font-family: 'Syne', sans-serif;
-      font-size: 48px;
-      font-weight: 800;
-      letter-spacing: -2px;
-      line-height: 1;
-    }
-
-    .price-period { font-size: 14px; color: var(--muted); align-self: flex-end; margin-bottom: 6px; }
-
-    .plan-desc {
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.7;
-      margin-bottom: 36px;
-      padding-bottom: 36px;
-      border-bottom: 1px solid var(--border);
-      font-weight: 300;
-    }
-
-    .plan-features {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      margin-bottom: 40px;
-    }
-
-    .plan-features li {
-      font-size: 14px;
-      color: var(--muted);
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      line-height: 1.5;
-    }
-
-    .plan-features li .check {
-      color: var(--accent);
-      font-size: 12px;
-      margin-top: 2px;
-      flex-shrink: 0;
-    }
-
-    .plan-cta {
-      display: block;
-      text-align: center;
-      padding: 14px;
-      border-radius: 4px;
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      text-decoration: none;
-      transition: all 0.2s;
-    }
-
-    .plan:not(.featured) .plan-cta {
-      border: 1px solid var(--border);
-      color: var(--white);
-    }
-    .plan:not(.featured) .plan-cta:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    .plan.featured .plan-cta {
-      background: var(--accent);
-      color: #000;
-    }
-    .plan.featured .plan-cta:hover { opacity: 0.85; transform: translateY(-1px); }
-
-    /* ─── AUTHORITY ─── */
-    #authority {
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .authority-layout {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 80px;
-      align-items: center;
-      margin-top: 60px;
-    }
-
-    .tech-stack {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 2px;
-    }
-
-    .tech-item {
-      background: var(--bg);
-      padding: 24px 20px;
-      text-align: center;
-      transition: background 0.2s;
-    }
-    .tech-item:hover { background: var(--surface2); }
-
-    .tech-icon { font-size: 24px; margin-bottom: 8px; }
-    .tech-name { font-size: 11px; color: var(--muted); letter-spacing: 1px; }
-
-    .authority-points {
-      display: flex;
-      flex-direction: column;
-      gap: 28px;
-    }
-
-    .authority-point {
-      display: flex;
-      gap: 24px;
-      align-items: flex-start;
-    }
-
-    .ap-num {
-      font-family: 'Syne', sans-serif;
-      font-size: 11px;
-      letter-spacing: 2px;
-      color: var(--accent);
-      padding-top: 4px;
-      flex-shrink: 0;
-    }
-
-    .ap-content h4 {
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
-
-    .ap-content p {
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.7;
-      font-weight: 300;
-    }
-
-    /* ─── CTA FINAL ─── */
-    #cta {
-      background: var(--bg);
-      padding: 120px 60px;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    #cta::before {
-      content: '';
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 800px; height: 400px;
-      background: radial-gradient(ellipse, rgba(0,212,255,0.05) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    #cta h2 {
-      font-size: clamp(36px, 5vw, 64px);
-      margin-bottom: 20px;
-      position: relative;
-    }
-
-    #cta p {
-      font-size: 16px;
-      color: var(--muted);
-      max-width: 480px;
-      margin: 0 auto 48px;
-      line-height: 1.7;
-      font-weight: 300;
-    }
-
-    .cta-actions {
-      display: flex;
-      gap: 16px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .btn-whatsapp {
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      background: var(--accent);
-      color: #000;
-      font-weight: 700;
-      font-size: 15px;
-      padding: 18px 40px;
-      border-radius: 4px;
-      text-decoration: none;
-      transition: all 0.2s;
-      letter-spacing: 0.3px;
-    }
-    .btn-whatsapp:hover {
-      opacity: 0.85;
-      transform: translateY(-2px);
-      box-shadow: 0 12px 40px rgba(0,212,255,0.2);
-    }
-
-    /* ─── FOOTER ─── */
-    footer {
-      padding: 40px 60px;
-      border-top: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .footer-left { display: flex; align-items: center; gap: 20px; }
-
-    .footer-copy {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .footer-cnpj {
-      font-size: 11px;
-      color: var(--muted2);
-      letter-spacing: 0.5px;
-    }
-
-    .footer-right { font-size: 11px; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; }
-
-    /* ─── FLOATING WA BUTTON ─── */
-    .float-wa {
-      position: fixed;
-      bottom: 32px; right: 32px;
-      width: 56px; height: 56px;
-      background: var(--accent);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      text-decoration: none;
-      z-index: 200;
-      box-shadow: 0 4px 24px rgba(0,212,255,0.3);
-      transition: transform 0.2s, box-shadow 0.2s;
-      animation: fadeIn 1s 1s both;
-    }
-    .float-wa:hover { transform: scale(1.1); box-shadow: 0 8px 32px rgba(0,212,255,0.4); }
-    .float-wa svg { width: 24px; height: 24px; fill: #000; }
-
-    /* ─── ANIMATIONS ─── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(24px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to   { opacity: 1; }
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50%       { opacity: 0.5; transform: scale(0.8); }
-    }
-
-    .reveal {
-      opacity: 0;
-      transform: translateY(32px);
-      transition: opacity 0.7s ease, transform 0.7s ease;
-    }
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* ─── RESPONSIVE ─── */
-    @media (max-width: 900px) {
-      nav { padding: 16px 24px; }
-      .nav-links { display: none; }
-      section { padding: 70px 24px; }
-      #hero { padding: 100px 24px 160px; }
-      .hero-stats { left: 24px; right: 24px; flex-wrap: wrap; gap: 20px; }
-      .stat { border-right: none; padding-right: 0; margin-right: 0; min-width: calc(50% - 10px); }
-      .problems-grid, .steps, .plans-grid { grid-template-columns: 1fr; }
-      .services-layout, .authority-layout { grid-template-columns: 1fr; gap: 40px; }
-      h1 { font-size: 40px; }
-      footer { flex-direction: column; gap: 12px; text-align: center; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Naxior Tech — Engenharia & Automação</title>
+    <meta name="description"
+          content="Integrações, automações e ferramentas sob medida para empresas que precisam de tecnologia que funciona. Naxior Tech, Brasília.">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap"
+          rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- NAV -->
+<!-- ─── NAV ─── -->
 <nav>
-  <a href="#" class="nav-logo">
-    <div class="logo-icon"></div>
-    <div class="logo-text">
-      <span class="logo-name">NAXIOR</span>
-      <span class="logo-sub">TECH</span>
-    </div>
-  </a>
-  <ul class="nav-links">
-    <li><a href="#problems">Problemas</a></li>
-    <li><a href="#services">Serviços</a></li>
-    <li><a href="#how">Como Funciona</a></li>
-    <li><a href="#plans">Planos</a></li>
-  </ul>
-  <a href="https://wa.me/5561999999999?text=Olá%2C%20vim%20pelo%20site%20da%20Naxior%20Tech%20e%20gostaria%20de%20um%20diagnóstico%20gratuito."
-     class="nav-cta" target="_blank">Falar no WhatsApp</a>
+    <a href="#" class="nav-logo">
+        <div class="logo-icon"></div>
+        <div class="logo-text">
+            <span class="logo-name">NAXIOR</span>
+            <span class="logo-sub">TECH</span>
+        </div>
+    </a>
+    <ul class="nav-links">
+        <li><a href="#services">Serviços</a></li>
+        <li><a href="#how">Como Funciona</a></li>
+        <li><a href="#budget">Orçamento</a></li>
+        <li><a href="#contact">Contato</a></li>
+    </ul>
+    <a href="#contact" class="nav-cta">Descrever Projeto</a>
 </nav>
 
-<!-- HERO -->
+<!-- ─── HERO ─── -->
 <section id="hero">
-  <div class="hero-content">
-    <div class="hero-badge">
-      <span></span>
-      Brasília · DF
+    <div class="hero-content">
+        <div class="hero-badge">
+            <span></span>
+            Brasília · DF
+        </div>
+        <h1>Seu problema<br>técnico tem<br><em>solução.</em></h1>
+        <p class="hero-sub">
+            Integrações, automações e ferramentas sob medida.
+            Você descreve o problema — eu entrego a solução, com 1 mês de suporte incluso.
+        </p>
+        <div class="hero-actions">
+            <a href="#contact" class="btn-primary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                </svg>
+                Descrever meu projeto
+            </a>
+            <a href="#services" class="btn-secondary">Ver o que resolvemos</a>
+        </div>
     </div>
-    <h1>Tecnologia que<br><em>funciona,</em><br>sem complicação.</h1>
-    <p class="hero-sub">Desenvolvimento, manutenção e integração de sistemas para empresas que precisam de tecnologia confiável — sem depender de um time de TI interno.</p>
-    <div class="hero-actions">
-      <a href="https://wa.me/5561999999999?text=Olá%2C%20vim%20pelo%20site%20da%20Naxior%20Tech%20e%20gostaria%20de%20um%20diagnóstico%20gratuito."
-         class="btn-primary" target="_blank">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.124.558 4.118 1.533 5.845L0 24l6.335-1.508A11.933 11.933 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.808 9.808 0 01-4.994-1.368l-.358-.213-3.76.895.952-3.668-.233-.375A9.79 9.79 0 012.182 12c0-5.422 4.396-9.818 9.818-9.818 5.422 0 9.818 4.396 9.818 9.818 0 5.422-4.396 9.818-9.818 9.818z"/></svg>
-        Diagnóstico Gratuito
-      </a>
-      <a href="#services" class="btn-secondary">Ver serviços</a>
-    </div>
-  </div>
 
-  <div class="hero-stats">
-    <div class="stat">
-      <div class="stat-num">24<span>h</span></div>
-      <div class="stat-label">Tempo máximo de resposta</div>
+    <div class="hero-stats">
+        <div class="stat">
+            <div class="stat-num">24<span>h</span></div>
+            <div class="stat-label">Proposta após briefing</div>
+        </div>
+        <div class="stat">
+            <div class="stat-num">1<span>m</span></div>
+            <div class="stat-label">Suporte pós-entrega incluso</div>
+        </div>
+        <div class="stat">
+            <div class="stat-num">MEI</div>
+            <div class="stat-label">Nota fiscal garantida</div>
+        </div>
+        <div class="stat">
+            <div class="stat-num">0</div>
+            <div class="stat-label">Contratos de fidelidade</div>
+        </div>
     </div>
-    <div class="stat">
-      <div class="stat-num">MEI</div>
-      <div class="stat-label">Nota fiscal garantida</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">0</div>
-      <div class="stat-label">Meses de fidelidade</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">3<span>+</span></div>
-      <div class="stat-label">Anos de experiência</div>
-    </div>
-  </div>
 </section>
 
-<!-- PROBLEMS -->
+<!-- ─── PROBLEMS ─── -->
 <section id="problems">
-  <div class="problems-header reveal">
-    <div class="section-label">O problema</div>
-    <h2>Sua empresa depende de<br>tecnologia que ninguém mantém.</h2>
-    <p class="section-sub">PMEs crescem e acumulam sistemas frágeis. Quando algo quebra, não há ninguém para resolver rápido.</p>
-  </div>
-  <div class="problems-grid">
-    <div class="problem-card reveal">
-      <div class="problem-num">01</div>
-      <svg class="problem-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <path d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
-      </svg>
-      <h3>Sistema caiu no meio do expediente</h3>
-      <p>Você chama o fornecedor, cai na fila de suporte e espera dias. Enquanto isso, o negócio para.</p>
+    <div class="problems-header reveal">
+        <div class="section-label">O que resolvemos</div>
+        <h2>Três problemas que<br>travam empresas todo dia.</h2>
+        <p class="section-sub">Não é falta de tecnologia — é falta de integração, automação e da ferramenta certa.</p>
     </div>
-    <div class="problem-card reveal">
-      <div class="problem-num">02</div>
-      <svg class="problem-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
-      </svg>
-      <h3>Sistemas que não conversam entre si</h3>
-      <p>Seu ERP não integra com o financeiro. Seu site não conecta ao estoque. Cada um no seu canto — e você no meio, digitando tudo duas vezes.</p>
+    <div class="problems-grid">
+
+        <div class="problem-card reveal">
+            <div class="problem-num">01</div>
+            <svg class="problem-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+            <h3>Processos manuais que deveriam ser automáticos</h3>
+            <p>Sua equipe perde horas copiando dados entre sistemas, gerando relatórios na mão ou disparando mensagens
+                uma a uma. Isso tem solução técnica direta.</p>
+        </div>
+
+        <div class="problem-card reveal">
+            <div class="problem-num">02</div>
+            <svg class="problem-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="2" y="3" width="20" height="14" rx="2"/>
+                <path d="M8 21h8M12 17v4"/>
+            </svg>
+            <h3>Sistemas que não conversam entre si</h3>
+            <p>ERP numa ponta, financeiro na outra, WhatsApp no meio — e ninguém falando a mesma língua. Cada integração
+                que falta é tempo e dinheiro perdido todo mês.</p>
+        </div>
+
+        <div class="problem-card reveal">
+            <div class="problem-num">03</div>
+            <svg class="problem-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>
+            </svg>
+            <h3>Precisa de uma ferramenta que não existe pronta</h3>
+            <p>Nenhum SaaS do mercado resolve exatamente o seu fluxo. O jeito é construir — mas encontrar quem entenda o
+                problema e entregue sem sumir é o maior desafio.</p>
+        </div>
+
     </div>
-    <div class="problem-card reveal">
-      <div class="problem-num">03</div>
-      <svg class="problem-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
-      </svg>
-      <h3>Projetos entregues e abandonados</h3>
-      <p>O desenvolvedor entregou, recebeu e sumiu. Qualquer ajuste virou um projeto novo — com novo orçamento e nova espera.</p>
-    </div>
-  </div>
 </section>
 
-<!-- SERVICES -->
+<!-- ─── SERVICES ─── -->
 <section id="services">
-  <div class="reveal">
-    <div class="section-label">O que entregamos</div>
-    <h2>Serviços que resolvem<br>problemas reais.</h2>
-  </div>
-  <div class="services-layout">
-    <div class="services-list" id="servicesList">
-
-      <div class="service-item active" data-idx="0" onclick="selectService(0)">
-        <div class="service-header">
-          <div class="service-title">
-            <span>Manutenção de Sistemas</span>
-            <span class="service-tag">RECORRENTE</span>
-          </div>
-          <span class="service-arrow">+</span>
-        </div>
-        <div class="service-body">
-          <p>Seu sistema monitorado, corrigido e atualizado todo mês. Você foca no negócio — a parte técnica fica comigo.</p>
-          <ul>
-            <li>Monitoramento preventivo contínuo</li>
-            <li>Correção de bugs com prioridade</li>
-            <li>Atualização de dependências e segurança</li>
-            <li>Relatório mensal de saúde do sistema</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="service-item" data-idx="1" onclick="selectService(1)">
-        <div class="service-header">
-          <div class="service-title">
-            <span>Desenvolvimento sob Demanda</span>
-            <span class="service-tag">PROJETO</span>
-          </div>
-          <span class="service-arrow">+</span>
-        </div>
-        <div class="service-body">
-          <p>Novas funcionalidades, sistemas do zero ou melhorias no que já existe. Entrega com documentação e suporte incluso.</p>
-          <ul>
-            <li>Web apps, dashboards e sistemas internos</li>
-            <li>Automações de processos manuais</li>
-            <li>APIs e back-ends customizados</li>
-            <li>Documentação técnica completa</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="service-item" data-idx="2" onclick="selectService(2)">
-        <div class="service-header">
-          <div class="service-title">
-            <span>Integração de Sistemas</span>
-            <span class="service-tag">PROJETO</span>
-          </div>
-          <span class="service-arrow">+</span>
-        </div>
-        <div class="service-body">
-          <p>Conectamos as ferramentas que você já usa para que elas trabalhem juntas automaticamente — sem digitação dupla, sem erro humano.</p>
-          <ul>
-            <li>ERP × financeiro × e-commerce</li>
-            <li>WhatsApp × agendamento × CRM</li>
-            <li>Emissão automática de NF-e</li>
-            <li>Webhooks e automações via API</li>
-          </ul>
-        </div>
-      </div>
-
+    <div class="reveal">
+        <div class="section-label">Serviços</div>
+        <h2>O que a Naxior entrega.</h2>
+        <p class="section-sub">Três tipos de solução, escopo definido, entrega documentada e 1 mês de suporte em
+            qualquer projeto.</p>
     </div>
 
-    <div class="services-visual">
-      <div class="visual-card" id="visualCard">
-        <div class="visual-num" id="visualNum">01</div>
-        <div class="visual-content">
-          <h3 id="visualTitle">Manutenção de Sistemas</h3>
-          <p id="visualDesc">Prevenção é mais barata que correção de emergência. Um contrato mensal garante que seus sistemas estejam sempre funcionando — antes que o problema apareça.</p>
-          <div class="visual-tags" id="visualTags">
-            <span class="tag">Monitoramento</span>
-            <span class="tag">Suporte Prioritário</span>
-            <span class="tag">SLA Garantido</span>
-          </div>
+    <div class="services-layout">
+        <div class="services-list">
+
+            <div class="service-item active" onclick="selectService(0)">
+                <div class="service-header">
+                    <div class="service-title">
+                        <span>Automação de Processos</span>
+                        <span class="service-tag">EXECUÇÃO</span>
+                    </div>
+                    <span class="service-arrow">+</span>
+                </div>
+                <div class="service-body">
+                    <p>Mapeamos o processo manual que consome tempo da sua equipe e entregamos uma solução que roda
+                        sozinha — com notificações, logs e tratamento de erros.</p>
+                    <ul>
+                        <li>Automação de envio de e-mails e mensagens</li>
+                        <li>Geração automática de relatórios e planilhas</li>
+                        <li>Agendamento e disparo de tarefas recorrentes</li>
+                        <li>Bots e assistentes para atendimento interno</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="service-item" onclick="selectService(1)">
+                <div class="service-header">
+                    <div class="service-title">
+                        <span>Integração de Sistemas</span>
+                        <span class="service-tag">CONEXÃO</span>
+                    </div>
+                    <span class="service-arrow">+</span>
+                </div>
+                <div class="service-body">
+                    <p>Conectamos as ferramentas que você já usa para que elas trabalhem juntas automaticamente. Sem
+                        digitação dupla, sem exportação de planilha, sem erro humano.</p>
+                    <ul>
+                        <li>ERP × financeiro × e-commerce</li>
+                        <li>WhatsApp API × CRM × agendamento</li>
+                        <li>Emissão automática de NF-e</li>
+                        <li>Webhooks e pipelines de dados entre APIs</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="service-item" onclick="selectService(2)">
+                <div class="service-header">
+                    <div class="service-title">
+                        <span>Ferramentas sob Medida</span>
+                        <span class="service-tag">CONSTRUÇÃO</span>
+                    </div>
+                    <span class="service-arrow">+</span>
+                </div>
+                <div class="service-body">
+                    <p>Quando nenhuma solução pronta resolve, construímos do zero. Sistema interno, dashboard, portal de
+                        clientes — entregue com documentação e 1 mês de suporte.</p>
+                    <ul>
+                        <li>Sistemas web e dashboards internos</li>
+                        <li>Portais e painéis administrativos</li>
+                        <li>APIs e back-ends customizados</li>
+                        <li>Documentação técnica completa na entrega</li>
+                    </ul>
+                </div>
+            </div>
+
         </div>
-      </div>
+
+        <div class="services-visual">
+            <div class="visual-card">
+                <div class="visual-num" id="visualNum">01</div>
+                <div class="visual-content">
+                    <h3 id="visualTitle">Automação de Processos</h3>
+                    <p id="visualDesc">Mapeamos o processo manual que consome tempo da sua equipe e entregamos uma
+                        solução que roda sozinha — com notificações, logs e tratamento de erros.</p>
+                    <div class="visual-tags" id="visualTags">
+                        <span class="tag">Scripts</span>
+                        <span class="tag">Agendamento</span>
+                        <span class="tag">Notificações</span>
+                        <span class="tag">Relatórios automáticos</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 </section>
 
-<!-- HOW IT WORKS -->
+<!-- ─── HOW IT WORKS ─── -->
 <section id="how">
-  <div class="how-header reveal">
-    <div class="section-label">O processo</div>
-    <h2>Simples, transparente<br>e sem surpresas.</h2>
-    <p class="section-sub">Nada de reuniões infinitas ou escopo nebuloso. Três passos e você já sabe exatamente o que esperar.</p>
-  </div>
-  <div class="steps">
-    <div class="step reveal">
-      <div class="step-dot">01</div>
-      <h3>Diagnóstico Gratuito</h3>
-      <p>Você explica o que tem e o que precisa. Eu analiso o cenário técnico e identifico os pontos críticos — sem custo e sem compromisso.</p>
-      <span class="step-note">30 min · pelo WhatsApp</span>
+    <div class="how-header reveal">
+        <div class="section-label">O processo</div>
+        <h2>Do problema<br>à entrega.</h2>
+        <p class="section-sub">Sem reuniões infinitas. Você descreve, eu analiso, a gente alinha e executa.</p>
     </div>
-    <div class="step reveal">
-      <div class="step-dot">02</div>
-      <h3>Proposta em 24h</h3>
-      <p>Uma proposta clara com escopo definido, prazo real e valor fixo. Sem surpresas no meio do caminho.</p>
-      <span class="step-note">Contrato por escrito</span>
+    <div class="steps">
+        <div class="step reveal">
+            <div class="step-dot">01</div>
+            <h3>Você descreve o problema</h3>
+            <p>Preenche o formulário com o que precisa — sem precisar saber o nome técnico da solução. Só explicar o que
+                trava o seu processo já é suficiente.</p>
+            <span class="step-note">Formulário nesta página</span>
+        </div>
+        <div class="step reveal">
+            <div class="step-dot">02</div>
+            <h3>Proposta em até 24h</h3>
+            <p>Analiso o briefing, entro em contato para alinhar detalhes e envio uma proposta com escopo definido,
+                prazo real e valor fixo. Sem surpresas no meio do projeto.</p>
+            <span class="step-note">Contrato por escrito</span>
+        </div>
+        <div class="step reveal">
+            <div class="step-dot">03</div>
+            <h3>Entrega + 1 mês de suporte</h3>
+            <p>Projeto entregue com documentação. O mês seguinte à entrega está incluso no contrato — qualquer ajuste ou
+                problema nesse período é resolvido sem custo extra.</p>
+            <span class="step-note">Nota fiscal MEI inclusa</span>
+        </div>
     </div>
-    <div class="step reveal">
-      <div class="step-dot">03</div>
-      <h3>Contrato Sem Fidelidade</h3>
-      <p>Planos mensais que você cancela quando quiser. A relação se mantém porque o serviço funciona — não porque existe contrato de 12 meses.</p>
-      <span class="step-note">Nota fiscal MEI inclusa</span>
-    </div>
-  </div>
 </section>
 
-<!-- PLANS -->
-<section id="plans">
-  <div class="plans-header reveal">
-    <div class="section-label">Planos mensais</div>
-    <h2>Previsibilidade financeira<br>para sua tecnologia.</h2>
-    <p class="section-sub">Escolha o plano que encaixa no tamanho do seu negócio. Sem fidelidade, sem letra miúda.</p>
-  </div>
-  <div class="plans-grid">
-
-    <div class="plan reveal">
-      <div class="plan-name">Essencial</div>
-      <div class="plan-price">
-        <span class="price-from">a partir de</span>
-        <span class="price-num">R$&nbsp;500</span>
-        <span class="price-period">/mês</span>
-      </div>
-      <p class="plan-desc">Para quem tem um sistema simples e precisa de suporte básico e confiável.</p>
-      <ul class="plan-features">
-        <li><span class="check">✓</span> Suporte via WhatsApp em horário comercial</li>
-        <li><span class="check">✓</span> Correção de bugs (até 4h/mês)</li>
-        <li><span class="check">✓</span> Monitoramento básico de disponibilidade</li>
-        <li><span class="check">✓</span> Relatório mensal simplificado</li>
-        <li><span class="check">✓</span> Nota fiscal MEI</li>
-      </ul>
-      <a href="https://wa.me/5561999999999?text=Olá%2C%20tenho%20interesse%20no%20plano%20Essencial%20da%20Naxior%20Tech." class="plan-cta" target="_blank">Começar agora</a>
+<!-- ─── BUDGET ─── -->
+<section id="budget">
+    <div class="budget-header reveal">
+        <div class="section-label">Orçamento</div>
+        <h2>Cada projeto tem<br>seu valor.</h2>
+        <p class="section-sub">Não trabalhamos com planos mensais fixos. O preço é calculado pelo escopo — e você sabe o
+            valor antes de assinar qualquer coisa.</p>
     </div>
 
-    <div class="plan featured reveal">
-      <div class="plan-badge">Mais Escolhido</div>
-      <div class="plan-name">Profissional</div>
-      <div class="plan-price">
-        <span class="price-from">a partir de</span>
-        <span class="price-num">R$&nbsp;1.5k</span>
-        <span class="price-period">/mês</span>
-      </div>
-      <p class="plan-desc">Para empresas que dependem de tecnologia no dia a dia e não podem esperar por suporte.</p>
-      <ul class="plan-features">
-        <li><span class="check">✓</span> Suporte prioritário (resposta em até 4h)</li>
-        <li><span class="check">✓</span> Manutenção preventiva e corretiva</li>
-        <li><span class="check">✓</span> Até 16h de desenvolvimento/mês</li>
-        <li><span class="check">✓</span> 1 integração de API inclusa por trimestre</li>
-        <li><span class="check">✓</span> Reunião mensal de acompanhamento</li>
-        <li><span class="check">✓</span> Nota fiscal MEI</li>
-      </ul>
-      <a href="https://wa.me/5561999999999?text=Olá%2C%20tenho%20interesse%20no%20plano%20Profissional%20da%20Naxior%20Tech." class="plan-cta" target="_blank">Começar agora</a>
+    <div class="budget-grid">
+        <div class="budget-card reveal">
+            <div class="budget-card-num">01</div>
+            <h3>Escopo define o preço</h3>
+            <p>Uma automação simples, uma integração entre dois sistemas ou um software completo têm escopos — e valores
+                — completamente diferentes. Não existe tabela de preço único para isso.</p>
+        </div>
+        <div class="budget-card reveal">
+            <div class="budget-card-num">02</div>
+            <h3>Proposta antes de qualquer compromisso</h3>
+            <p>Você recebe uma proposta detalhada com entregáveis, prazo e valor. Só avançamos se fizer sentido para os
+                dois lados. Sem pressão, sem letra miúda.</p>
+        </div>
+        <div class="budget-card reveal">
+            <div class="budget-card-num">03</div>
+            <h3>Contrato para projetos formalizados</h3>
+            <p>Para projetos de maior porte, formalizamos em contrato de prestação de serviços. Segurança jurídica para
+                você e para a Naxior — com nota fiscal MEI em todo pagamento.</p>
+        </div>
     </div>
 
-    <div class="plan reveal">
-      <div class="plan-name">Enterprise</div>
-      <div class="plan-price">
-        <span class="price-num" style="font-size:32px; padding-top: 8px;">Sob consulta</span>
-      </div>
-      <p class="plan-desc">Para operações maiores que precisam de presença técnica dedicada e SLA customizado.</p>
-      <ul class="plan-features">
-        <li><span class="check">✓</span> Suporte 24/7 para incidentes críticos</li>
-        <li><span class="check">✓</span> Horas de desenvolvimento ilimitadas</li>
-        <li><span class="check">✓</span> Integrações e automações sob demanda</li>
-        <li><span class="check">✓</span> SLA personalizado e documentado</li>
-        <li><span class="check">✓</span> Acompanhamento estratégico de TI</li>
-        <li><span class="check">✓</span> Nota fiscal MEI</li>
-      </ul>
-      <a href="https://wa.me/5561999999999?text=Olá%2C%20gostaria%20de%20conversar%20sobre%20um%20plano%20Enterprise%20da%20Naxior%20Tech." class="plan-cta" target="_blank">Falar com especialista</a>
+    <div class="budget-guarantee reveal">
+        <div class="guarantee-icon">🛡️</div>
+        <div class="guarantee-text">
+            <h4>1 mês de suporte pós-entrega em todo projeto</h4>
+            <p>Qualquer problema identificado no mês seguinte à entrega é resolvido sem custo adicional. Não porque
+                somos obrigados — mas porque entregamos o que funciona, e garantimos isso.</p>
+        </div>
     </div>
-
-  </div>
 </section>
 
-<!-- AUTHORITY -->
+<!-- ─── CONTACT FORM ─── -->
+<section id="contact">
+    <div class="reveal">
+        <div class="section-label">Contato</div>
+        <h2>Descreva seu<br>problema.</h2>
+    </div>
+
+    <div class="contact-layout">
+        <div class="contact-info reveal">
+            <h3>Sem reuniões de discovery infinitas.</h3>
+            <p>Preencha o formulário com o máximo de contexto que conseguir. Quanto mais você descrever, mais rápido e
+                precisa será a proposta.</p>
+
+            <div class="contact-detail">
+                <div>
+                    <strong>Retorno</strong>
+                    Até 24h úteis após o briefing
+                </div>
+            </div>
+            <div class="contact-detail">
+                <div>
+                    <strong>WhatsApp direto</strong>
+                    Para dúvidas antes de preencher
+                </div>
+            </div>
+            <div class="contact-detail">
+                <div>
+                    <strong>Localização</strong>
+                    Brasília, DF · Atendimento remoto
+                </div>
+            </div>
+        </div>
+
+        <div class="form-card reveal">
+            <form id="contactForm" novalidate>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fieldName">Nome *</label>
+                        <input type="text" id="fieldName" placeholder="Seu nome" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fieldCompany">Empresa</label>
+                        <input type="text" id="fieldCompany" placeholder="Nome da empresa">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fieldEmail">E-mail *</label>
+                        <input type="email" id="fieldEmail" placeholder="seu@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fieldWhatsapp">WhatsApp</label>
+                        <input type="tel" id="fieldWhatsapp" placeholder="(61) 98455-8823">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Tipo de projeto *</label>
+                    <div class="form-type-grid">
+                        <div>
+                            <input type="radio" name="problemType" id="typeAuto" value="Automação" class="type-option">
+                            <label for="typeAuto" class="type-label">
+                                <span class="type-emoji">⚡</span>
+                                Automação
+                            </label>
+                        </div>
+                        <div>
+                            <input type="radio" name="problemType" id="typeInteg" value="Integração"
+                                   class="type-option">
+                            <label for="typeInteg" class="type-label">
+                                <span class="type-emoji">🔗</span>
+                                Integração
+                            </label>
+                        </div>
+                        <div>
+                            <input type="radio" name="problemType" id="typeFerr" value="Ferramenta sob medida"
+                                   class="type-option">
+                            <label for="typeFerr" class="type-label">
+                                <span class="type-emoji">🛠️</span>
+                                Ferramenta
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="fieldDescription">Descreva o problema *</label>
+                    <textarea id="fieldDescription"
+                              placeholder="Explique o que acontece hoje, o que você quer que aconteça, e qualquer contexto relevante sobre os sistemas envolvidos."
+                              required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="fieldDeadline">Prazo estimado</label>
+                    <select id="fieldDeadline">
+                        <option value="" disabled selected>Quando você precisa disso?</option>
+                        <option value="Urgente (menos de 2 semanas)">Urgente — menos de 2 semanas</option>
+                        <option value="Curto prazo (2 a 4 semanas)">Curto prazo — 2 a 4 semanas</option>
+                        <option value="Médio prazo (1 a 3 meses)">Médio prazo — 1 a 3 meses</option>
+                        <option value="Sem pressa, quero planejar">Sem pressa, quero planejar</option>
+                    </select>
+                </div>
+
+                <div class="form-submit">
+                    <button type="submit" class="btn-primary">Enviar Briefing</button>
+                </div>
+                <div id="formStatus" class="form-status"></div>
+
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- ─── AUTHORITY ─── -->
 <section id="authority">
-  <div class="reveal">
-    <div class="section-label">Por que a Naxior</div>
-    <h2>Engenharia séria.<br>Sem rodeios.</h2>
-  </div>
-  <div class="authority-layout">
-    <div class="authority-points reveal">
-      <div class="authority-point">
-        <span class="ap-num">01</span>
-        <div class="ap-content">
-          <h4>Você fala com quem faz</h4>
-          <p>Sem intermediários, sem terceirização escondida. O engenheiro que você contrata é o mesmo que escreve o código e responde o WhatsApp.</p>
-        </div>
-      </div>
-      <div class="authority-point">
-        <span class="ap-num">02</span>
-        <div class="ap-content">
-          <h4>Transparência técnica total</h4>
-          <p>Você sempre sabe o que foi feito, por quê e quanto tempo levou. Relatórios mensais em linguagem humana — não em jargão técnico.</p>
-        </div>
-      </div>
-      <div class="authority-point">
-        <span class="ap-num">03</span>
-        <div class="ap-content">
-          <h4>MEI regularizado, nota fiscal garantida</h4>
-          <p>CNPJ ativo, emissor de NF-e. Você contrata com segurança jurídica e deduz como despesa operacional.</p>
-        </div>
-      </div>
-      <div class="authority-point">
-        <span class="ap-num">04</span>
-        <div class="ap-content">
-          <h4>Tecnologia aplicada, não teórica</h4>
-          <p>Stack moderno e pragmático. Escolho a ferramenta certa para o problema — não a mais cara nem a mais na moda.</p>
-        </div>
-      </div>
+    <div class="reveal">
+        <div class="section-label">Por que a Naxior</div>
+        <h2>Engenharia séria.<br>Sem rodeios.</h2>
     </div>
+    <div class="authority-layout">
+        <div class="authority-points reveal">
+            <div class="authority-point">
+                <span class="ap-num">01</span>
+                <div class="ap-content">
+                    <h4>Você fala com quem faz</h4>
+                    <p>Sem intermediários, sem terceirização escondida. O engenheiro que você contrata é o mesmo que
+                        escreve o código, responde o WhatsApp e entrega o projeto.</p>
+                </div>
+            </div>
+            <div class="authority-point">
+                <span class="ap-num">02</span>
+                <div class="ap-content">
+                    <h4>Escopo claro antes de qualquer centavo</h4>
+                    <p>Você recebe uma proposta detalhada com o que será entregue, quando e por quanto. Nenhuma surpresa
+                        no meio do projeto — e nenhuma cobrança sem acordo prévio.</p>
+                </div>
+            </div>
+            <div class="authority-point">
+                <span class="ap-num">03</span>
+                <div class="ap-content">
+                    <h4>MEI regularizado, nota fiscal em todo pagamento</h4>
+                    <p>CNPJ ativo, emissor de NF-e. Você contrata com segurança jurídica, registra como despesa
+                        operacional e não corre risco com pejotização informal.</p>
+                </div>
+            </div>
+            <div class="authority-point">
+                <span class="ap-num">04</span>
+                <div class="ap-content">
+                    <h4>Documentação na entrega, sempre</h4>
+                    <p>Todo projeto é entregue com documentação técnica. Se algum dia você quiser migrar, expandir ou
+                        contratar outra pessoa para dar continuidade — você tem tudo em mãos.</p>
+                </div>
+            </div>
+        </div>
 
-    <div class="tech-stack reveal">
-      <div class="tech-item"><div class="tech-icon">⚡</div><div class="tech-name">JavaScript</div></div>
-      <div class="tech-item"><div class="tech-icon">🐍</div><div class="tech-name">Python</div></div>
-      <div class="tech-item"><div class="tech-icon">🗄️</div><div class="tech-name">SQL</div></div>
-      <div class="tech-item"><div class="tech-icon">☁️</div><div class="tech-name">Cloud</div></div>
-      <div class="tech-item"><div class="tech-icon">🔗</div><div class="tech-name">REST APIs</div></div>
-      <div class="tech-item"><div class="tech-icon">🤖</div><div class="tech-name">Automação</div></div>
-      <div class="tech-item"><div class="tech-icon">🐳</div><div class="tech-name">Docker</div></div>
-      <div class="tech-item"><div class="tech-icon">🔒</div><div class="tech-name">Segurança</div></div>
+        <div class="tech-stack reveal">
+            <div class="tech-item">
+                <div class="tech-icon">⚡</div>
+                <div class="tech-name">JavaScript</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-icon">🐍</div>
+                <div class="tech-name">Python</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-icon">🗄️</div>
+                <div class="tech-name">SQL</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-icon">☁️</div>
+                <div class="tech-name">Cloud</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-icon">🔗</div>
+                <div class="tech-name">REST APIs</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-icon">🤖</div>
+                <div class="tech-name">Automação</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-icon">🐳</div>
+                <div class="tech-name">Docker</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-icon">🔒</div>
+                <div class="tech-name">Segurança</div>
+            </div>
+        </div>
     </div>
-  </div>
 </section>
 
-<!-- CTA FINAL -->
+<!-- ─── CTA FINAL ─── -->
 <section id="cta">
-  <h2 class="reveal">Pronto para parar de<br><em>apagar incêndios?</em></h2>
-  <p class="reveal">Diagnóstico gratuito, sem compromisso. 30 minutos pelo WhatsApp e você já sai com clareza sobre o que precisa ser feito.</p>
-  <div class="cta-actions reveal">
-    <a href="https://wa.me/5561999999999?text=Olá%2C%20vim%20pelo%20site%20da%20Naxior%20Tech%20e%20gostaria%20de%20um%20diagnóstico%20gratuito."
-       class="btn-whatsapp" target="_blank">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.124.558 4.118 1.533 5.845L0 24l6.335-1.508A11.933 11.933 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.808 9.808 0 01-4.994-1.368l-.358-.213-3.76.895.952-3.668-.233-.375A9.79 9.79 0 012.182 12c0-5.422 4.396-9.818 9.818-9.818 5.422 0 9.818 4.396 9.818 9.818 0 5.422-4.396 9.818-9.818 9.818z"/></svg>
-      Falar agora no WhatsApp
-    </a>
-  </div>
+    <h2 class="reveal">Tem um problema<br><em>para resolver?</em></h2>
+    <p class="reveal">Descreve o que trava seu negócio. A proposta vem em 24h.</p>
+    <div class="cta-actions reveal">
+        <a href="#contact" class="btn-primary">
+            Descrever meu projeto
+        </a>
+        <a href="https://wa.me/5561999999999?text=Olá%2C%20vim%20pelo%20site%20da%20Naxior%20Tech%20e%20quero%20conversar%20sobre%20um%20projeto."
+           class="btn-secondary" target="_blank">ou falar no WhatsApp</a>
+    </div>
 </section>
 
-<!-- FOOTER -->
+<!-- ─── FOOTER ─── -->
 <footer>
-  <div class="footer-left">
-    <div class="logo-icon" style="width:24px;height:24px;"></div>
-    <div>
-      <div class="footer-copy">© 2025 Naxior Tech · Dérick Rangel</div>
-      <div class="footer-cnpj">CNPJ 65.090.118/0001-01 · Brasília, DF</div>
+    <div class="footer-left">
+        <div class="logo-icon footer-logo-icon"></div>
+        <div>
+            <div class="footer-copy">© 2025 Naxior Tech · Dérick Rangel</div>
+            <div class="footer-cnpj">CNPJ 65.090.118/0001-01 · Brasília, DF</div>
+        </div>
     </div>
-  </div>
-  <div class="footer-right">High-End Engineering & AI Automation</div>
+    <div class="footer-right">High-End Engineering & AI Automation</div>
 </footer>
 
-<!-- FLOATING WHATSAPP -->
-<a href="https://wa.me/5561999999999?text=Olá%2C%20vim%20pelo%20site%20da%20Naxior%20Tech." class="float-wa" target="_blank" title="Falar no WhatsApp">
-  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.124.558 4.118 1.533 5.845L0 24l6.335-1.508A11.933 11.933 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.808 9.808 0 01-4.994-1.368l-.358-.213-3.76.895.952-3.668-.233-.375A9.79 9.79 0 012.182 12c0-5.422 4.396-9.818 9.818-9.818 5.422 0 9.818 4.396 9.818 9.818 0 5.422-4.396 9.818-9.818 9.818z"/></svg>
+<!-- ─── FLOATING WA ─── -->
+<a href="https://wa.me/5561999999999?text=Olá%2C%20vim%20pelo%20site%20da%20Naxior%20Tech."
+   class="float-wa" target="_blank" title="WhatsApp">
+    <svg viewBox="0 0 24 24">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+        <path d="M12 0C5.373 0 0 5.373 0 12c0 2.124.558 4.118 1.533 5.845L0 24l6.335-1.508A11.933 11.933 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.808 9.808 0 01-4.994-1.368l-.358-.213-3.76.895.952-3.668-.233-.375A9.79 9.79 0 012.182 12c0-5.422 4.396-9.818 9.818-9.818 5.422 0 9.818 4.396 9.818 9.818 0 5.422-4.396 9.818-9.818 9.818z"/>
+    </svg>
 </a>
 
-<script>
-  // ── Services accordion ──
-  const serviceData = [
-    {
-      num: '01',
-      title: 'Manutenção de Sistemas',
-      desc: 'Prevenção é mais barata que correção de emergência. Um contrato mensal garante que seus sistemas estejam sempre funcionando — antes que o problema apareça.',
-      tags: ['Monitoramento', 'Suporte Prioritário', 'SLA Garantido']
-    },
-    {
-      num: '02',
-      title: 'Desenvolvimento sob Demanda',
-      desc: 'Novas funcionalidades ou sistemas do zero, entregues com documentação e sem sumiços depois da entrega. Escopo claro, prazo real, preço fixo.',
-      tags: ['Web Apps', 'APIs', 'Automações', 'Documentação']
-    },
-    {
-      num: '03',
-      title: 'Integração de Sistemas',
-      desc: 'Seus sistemas passam a trabalhar juntos automaticamente. Chega de digitar a mesma informação em dois lugares diferentes ou exportar planilhas manualmente.',
-      tags: ['API REST', 'Webhooks', 'ERP', 'WhatsApp API']
-    }
-  ];
+<!-- Scripts -->
+<script src="main.js"></script>
 
-  function selectService(idx) {
-    document.querySelectorAll('.service-item').forEach((el, i) => {
-      el.classList.toggle('active', i === idx);
-    });
-    const d = serviceData[idx];
-    document.getElementById('visualNum').textContent   = d.num;
-    document.getElementById('visualTitle').textContent = d.title;
-    document.getElementById('visualDesc').textContent  = d.desc;
-    const tagsEl = document.getElementById('visualTags');
-    tagsEl.innerHTML = d.tags.map(t => `<span class="tag">${t}</span>`).join('');
-  }
-
-  // ── Scroll reveal ──
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((e, i) => {
-      if (e.isIntersecting) {
-        setTimeout(() => e.target.classList.add('visible'), i * 80);
-        observer.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.12 });
-
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-  // ── Nav shrink on scroll ──
-  window.addEventListener('scroll', () => {
-    document.querySelector('nav').style.padding =
-      window.scrollY > 60 ? '12px 60px' : '20px 60px';
-  });
-</script>
 </body>
 </html>
