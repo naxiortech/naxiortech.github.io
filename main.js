@@ -54,6 +54,37 @@ window.addEventListener('scroll', () => {
     }
 });
 
+/* ─── SUPABASE CONFIG ─── */
+const SUPABASE_URL  = 'https://uvqfkhxkjmxrujygflxk.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV2cWZraHhram14cnVqeWdmbHhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE3MTczOTgsImV4cCI6MjA4NzI5MzM5OH0.dwWnQf2jVjnkYU1HjGvy9CcZk42tgOmDICyohgoFhUg';
+
+async function insertLead(data) {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/leads`, {
+        method: 'POST',
+        headers: {
+            'Content-Type':  'application/json',
+            'apikey':        SUPABASE_ANON,
+            'Authorization': 'Bearer ' + SUPABASE_ANON,
+            'Prefer':        'return=minimal'
+        },
+        body: JSON.stringify({
+            name:         data.name,
+            company:      data.company     || null,
+            email:        data.email,
+            whatsapp:     data.whatsapp    || null,
+            problem_type: data.problemType || null,
+            description:  data.description,
+            deadline:     data.deadline    || null,
+            status:       'new'
+        })
+    });
+
+    if (!res.ok) {
+        const err = await res.text();
+        throw new Error(err);
+    }
+}
+
 /* ─── CONTACT FORM ─── */
 const form = document.getElementById('contactForm');
 
@@ -63,7 +94,6 @@ form.addEventListener('submit', async (e) => {
     const btn    = form.querySelector('.btn-primary');
     const status = document.getElementById('formStatus');
 
-    // Collect form data
     const data = {
         name:        form.querySelector('#fieldName').value.trim(),
         company:     form.querySelector('#fieldCompany').value.trim(),
@@ -72,44 +102,19 @@ form.addEventListener('submit', async (e) => {
         problemType: form.querySelector('input[name="problemType"]:checked')?.value || '',
         description: form.querySelector('#fieldDescription').value.trim(),
         deadline:    form.querySelector('#fieldDeadline').value,
-        submittedAt: new Date().toISOString()
     };
 
-    // Basic validation
     if (!data.name || !data.email || !data.description || !data.problemType) {
         showStatus('error', 'Por favor, preencha todos os campos obrigatórios.');
         return;
     }
 
-    // Loading state
     btn.textContent = 'Enviando...';
-    btn.disabled = true;
+    btn.disabled    = true;
 
     try {
-        /*
-         * ── INTEGRATION POINT ──────────────────────────────────────────────────
-         * Substitua a URL abaixo pelo endpoint do seu sistema quando estiver pronto.
-         * O payload JSON já está estruturado e pronto para ser consumido por
-         * qualquer backend (Node, Python, n8n webhook, Make, etc.)
-         *
-         * Exemplo com n8n:
-         *   const res = await fetch('https://seu-n8n.app.n8n.cloud/webhook/leads', {
-         *     method: 'POST',
-         *     headers: { 'Content-Type': 'application/json' },
-         *     body: JSON.stringify(data)
-         *   });
-         *
-         * Por agora, apenas simulamos o envio com um delay.
-         * ───────────────────────────────────────────────────────────────────────
-         */
-        await new Promise(resolve => setTimeout(resolve, 1200)); // simula request
+        await insertLead(data);
 
-        // Log estruturado no console para debug/desenvolvimento
-        console.group('📋 Novo Lead — Naxior Tech');
-        console.table(data);
-        console.groupEnd();
-
-        // Montar mensagem WhatsApp como fallback/complemento
         const waMsg = encodeURIComponent(
             `Olá, sou ${data.name}${data.company ? ' da ' + data.company : ''}.\n\n` +
             `Tipo de projeto: ${data.problemType}\n` +
@@ -117,33 +122,31 @@ form.addEventListener('submit', async (e) => {
             `${data.description}`
         );
 
-        showStatus('success', '✓ Mensagem enviada! Retorno em até 24h. Ou fale agora pelo WhatsApp ↓');
-
-        // Atualiza o link do WhatsApp com os dados do form
         document.querySelectorAll('a[href*="wa.me"]').forEach(link => {
             link.href = `https://wa.me/5561999999999?text=${waMsg}`;
         });
 
+        showStatus('success', '✓ Mensagem enviada! Retorno em até 24h.');
         form.reset();
 
     } catch (err) {
+        console.error('Erro ao salvar lead:', err);
         showStatus('error', 'Erro ao enviar. Tente pelo WhatsApp diretamente.');
-        console.error('Form error:', err);
     } finally {
         btn.textContent = 'Enviar Briefing';
-        btn.disabled = false;
+        btn.disabled    = false;
     }
 });
 
 function showStatus(type, msg) {
     const status = document.getElementById('formStatus');
-    status.textContent = msg;
-    status.className = `form-status ${type}`;
+    status.textContent  = msg;
+    status.className    = `form-status ${type}`;
     status.style.display = 'block';
     setTimeout(() => { status.style.display = 'none'; }, 6000);
 }
 
-/* ─── WHATSAPP MASK (campo telefone) ─── */
+/* ─── WHATSAPP MASK ─── */
 document.getElementById('fieldWhatsapp')?.addEventListener('input', (e) => {
     let v = e.target.value.replace(/\D/g, '').slice(0, 11);
     if (v.length > 6) {
