@@ -1068,8 +1068,10 @@ textarea {
 }
 
 .tech-icon {
-    font-size: 24px;
-    margin-bottom: 8px;
+    font-size: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .tech-name {
